@@ -431,7 +431,7 @@ func (x *StringOrInt) MarshalJSON() ([]byte, error) {
 	return []byte(util.JSONNull), nil
 }
 
-func NewFilename(w Workflow) string {
+func FilenameFor(w Workflow) string {
 	newName := strings.Map(func(r rune) rune {
 		switch {
 		case '0' <= r && r <= '9':
@@ -447,7 +447,7 @@ func NewFilename(w Workflow) string {
 
 	newName = strings.Trim(newName, "-")
 	newName = util.RemoveDupOf(newName, '-')
-	newName = "./.github/workflows/" + strings.ToLower(newName+".yml")
+	newName = strings.ToLower(newName + ".yml")
 
 	return newName
 }
