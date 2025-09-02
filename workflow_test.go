@@ -8,6 +8,7 @@ import (
 
 	"github.com/goforj/godump"
 	"github.com/kaptinlin/jsonschema"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
@@ -39,11 +40,12 @@ func TestWorkflowSchemaValidation(t *testing.T) {
 			},
 		},
 	})
-	resultErrKeys := slices.Sorted(maps.Keys(result.Errors))
+	detailedErrors := result.GetDetailedErrors()
+	resultErrKeys := slices.Sorted(maps.Keys(detailedErrors))
 
-	//assert.Len(t, result.Errors, 0)
+	assert.Len(t, result.Errors, 0)
 
 	for _, k := range resultErrKeys {
-		godump.Dump(result.Errors[k])
+		godump.Dump(k, detailedErrors[k])
 	}
 }
