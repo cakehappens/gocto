@@ -1,4 +1,4 @@
-package github
+package gocto
 
 import (
 	"fmt"
