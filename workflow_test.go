@@ -1,27 +1,16 @@
 package gocto
 
 import (
-	"maps"
-	"os"
-	"slices"
+	"bytes"
+	"encoding/json"
 	"testing"
 
-	"github.com/goforj/godump"
-	"github.com/kaptinlin/jsonschema"
-	"github.com/stretchr/testify/assert"
+	"github.com/santhosh-tekuri/jsonschema/v6"
 	"github.com/stretchr/testify/require"
 )
 
 func TestWorkflowSchemaValidation(t *testing.T) {
-	compiler := jsonschema.NewCompiler()
-
-	contents, err := os.ReadFile("./github-workflow.json")
-	require.NoError(t, err)
-
-	schema, err := compiler.Compile(contents)
-	require.NoError(t, err)
-
-	result := schema.ValidateStruct(Workflow{
+	wf := Workflow{
 		On: WorkflowOn{
 			Push: OnPush{
 				OnBranches: OnBranches{
@@ -39,13 +28,17 @@ func TestWorkflowSchemaValidation(t *testing.T) {
 				},
 			},
 		},
-	})
-	detailedErrors := result.GetDetailedErrors()
-	resultErrKeys := slices.Sorted(maps.Keys(detailedErrors))
-
-	assert.Len(t, result.Errors, 0)
-
-	for _, k := range resultErrKeys {
-		godump.Dump(k, detailedErrors[k])
 	}
+	wfJson, err := json.Marshal(wf)
+	require.NoError(t, err)
+
+	c := jsonschema.NewCompiler()
+	sch, err := c.Compile("./github-workflow.json")
+	require.NoError(t, err)
+
+	buf := bytes.NewBuffer(wfJson)
+	inst, err := jsonschema.UnmarshalJSON(buf)
+	require.NoError(t, err)
+
+	require.NoError(t, sch.Validate(inst))
 }

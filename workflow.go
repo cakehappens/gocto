@@ -41,8 +41,8 @@ type OnCall struct {
 type CallInput struct {
 	Description string        `json:"description,omitempty,omitzero"`
 	Default     string        `json:"default,omitempty,omitzero"`
-	Required    bool          `json:"required"`
-	Type        CallInputType `json:"type"`
+	Required    bool          `json:"required,omitempty,omitzero"`
+	Type        CallInputType `json:"type,omitempty,omitzero"`
 }
 
 type CallOutput struct {
@@ -52,7 +52,7 @@ type CallOutput struct {
 
 type CallSecrets struct {
 	Description string `json:"description,omitempty,omitzero"`
-	Required    bool   `json:"required"`
+	Required    bool   `json:"required,omitempty,omitzero"`
 }
 
 type CallInputType string
@@ -64,9 +64,9 @@ const (
 )
 
 type OnWorkflowRun struct {
-	Workflows  []string `json:"workflows,omitempty,omitzero"`
-	Types      []string `json:"types,omitempty,omitzero"`
-	OnBranches `json:",inline,omitempty,omitzero"`
+	Workflows []string `json:"workflows,omitempty,omitzero"`
+	Types     []string `json:"types,omitempty,omitzero"`
+	OnBranches
 }
 
 type OnDispatch struct {
@@ -109,14 +109,14 @@ type OnTags struct {
 type OnSchedule struct{}
 
 type OnPullRequest struct {
-	OnPaths    `json:",inline,omitempty,omitzero"`
-	OnBranches `json:",inline,omitempty,omitzero"`
+	OnPaths
+	OnBranches
 }
 
 type OnPush struct {
-	OnPaths    `json:",inline,omitempty,omitzero"`
-	OnBranches `json:",inline,omitempty,omitzero"`
-	OnTags     `json:",inline,omitempty,omitzero"`
+	OnPaths
+	OnBranches
+	OnTags
 }
 
 // Concurrency
@@ -222,7 +222,7 @@ type Defaults struct {
 
 type DefaultsRun struct {
 	Shell            Shell  `json:"shell,omitempty,omitzero"`
-	WorkingDirectory string `json:"working-directory,omitempty"`
+	WorkingDirectory string `json:"working-directory,omitempty,omitzero"`
 }
 
 type Step struct {
@@ -266,23 +266,23 @@ const (
 )
 
 type Container struct {
-	Image       string               `json:"image,omitempty"`
-	Env         map[string]string    `json:"env,omitempty"`
-	Ports       map[string]int       `json:"ports,omitempty"`
-	Volumes     []string             `json:"volumes,omitempty"`
+	Image       string               `json:"image,omitempty,omitzero"`
+	Env         map[string]string    `json:"env,omitempty,omitzero"`
+	Ports       map[string]int       `json:"ports,omitempty,omitzero"`
+	Volumes     []string             `json:"volumes,omitempty,omitzero"`
 	Credentials ContainerCredentials `json:"credentials,omitempty,omitzero"`
-	Options     string               `json:"options,omitempty"`
+	Options     string               `json:"options,omitempty,omitzero"`
 }
 
 type ContainerCredentials struct {
-	Username string `json:"username,omitempty"`
-	Password string `json:"password,omitempty"`
+	Username string `json:"username,omitempty,omitzero"`
+	Password string `json:"password,omitempty,omitzero"`
 }
 
 type Strategy struct {
-	Matrix      *Matrix `json:"matrix,omitempty"`
-	FailFast    bool    `json:"fail-fast,omitempty"`
-	MaxParallel int     `json:"max-parallel,omitempty"`
+	Matrix      *Matrix `json:"matrix,omitempty,omitzero"`
+	FailFast    bool    `json:"fail-fast,omitempty,omitzero"`
+	MaxParallel int     `json:"max-parallel,omitempty,omitzero"`
 }
 
 type Matrix struct {
