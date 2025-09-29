@@ -4,10 +4,15 @@ import (
 	"encoding/json"
 	"errors"
 	"maps"
+	"path"
 	"slices"
 	"strings"
 
 	"github.com/cakehappens/gocto/internal/util"
+)
+
+const (
+	DefaultPathToWorkflows = ".github/workflows"
 )
 
 // Workflow
@@ -432,6 +437,22 @@ func (x *StringOrInt) MarshalJSON() ([]byte, error) {
 	}
 
 	return []byte(util.JSONNull), nil
+}
+
+func (w *Workflow) GetFilename() string {
+	if w == nil {
+		return ""
+	}
+
+	if w.Filename == "" {
+		w.Filename = FilenameFor(*w)
+	}
+
+	return w.Filename
+}
+
+func (w *Workflow) GetRelativePathAndFilename() string {
+	return path.Join(DefaultPathToWorkflows, w.GetFilename())
 }
 
 func FilenameFor(w Workflow) string {
