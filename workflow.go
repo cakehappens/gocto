@@ -77,13 +77,13 @@ func FilenameFor(w Workflow) string {
 // WorkflowOn
 // https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions#on
 type WorkflowOn struct {
-	Call              OnCall        `json:"workflow_call,omitempty,omitzero"`
-	Run               OnWorkflowRun `json:"workflow_run,omitempty,omitzero"`
-	Dispatch          OnDispatch    `json:"workflow_dispatch,omitempty,omitzero"`
-	Schedule          OnSchedule    `json:"schedule,omitempty,omitzero"`
-	PullRequest       OnPullRequest `json:"pull_request,omitempty,omitzero"`
-	PullRequestTarget OnPullRequest `json:"pull_request_target,omitempty,omitzero"`
-	Push              OnPush        `json:"push,omitempty,omitzero"`
+	Call              *OnCall        `json:"workflow_call,omitempty,omitzero"`
+	Run               *OnWorkflowRun `json:"workflow_run,omitempty,omitzero"`
+	Dispatch          *OnDispatch    `json:"workflow_dispatch,omitempty,omitzero"`
+	Schedule          *OnSchedule    `json:"schedule,omitempty,omitzero"`
+	PullRequest       *OnPullRequest `json:"pull_request,omitempty"`
+	PullRequestTarget *OnPullRequest `json:"pull_request_target,omitempty,omitzero"`
+	Push              *OnPush        `json:"push,omitempty,omitzero"`
 }
 
 type OnCall struct {
