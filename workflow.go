@@ -34,11 +34,11 @@ type Workflow struct {
 type WorkflowOn struct {
 	Call              OnCall        `json:"workflow_call,omitempty,omitzero"`
 	Run               OnWorkflowRun `json:"workflow_run,omitempty,omitzero"`
-	Dispatch          OnDispatch    `json:"workflow_dispatch"`
+	Dispatch          OnDispatch    `json:"workflow_dispatch,omitempty,omitzero"`
 	Schedule          OnSchedule    `json:"schedule,omitempty,omitzero"`
-	PullRequest       OnPullRequest `json:"pull_request"`
+	PullRequest       OnPullRequest `json:"pull_request,omitempty,omitzero"`
 	PullRequestTarget OnPullRequest `json:"pull_request_target,omitempty,omitzero"`
-	Push              OnPush        `json:"push"`
+	Push              OnPush        `json:"push,omitempty,omitzero"`
 }
 
 type OnCall struct {
@@ -55,7 +55,7 @@ type CallInput struct {
 
 type CallOutput struct {
 	Description string `json:"description,omitempty,omitzero"`
-	Value       string `json:"value"`
+	Value       string `json:"value,omitempty,omitzero"`
 }
 
 type CallSecrets struct {
