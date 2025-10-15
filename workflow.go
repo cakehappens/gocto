@@ -26,7 +26,52 @@ type Workflow struct {
 	Jobs        map[string]Job `json:"jobs"`
 
 	// Storing filename here is useful when you need to reference reusable workflows
-	Filename string `json:"-"`
+	filename string
+}
+
+func (w *Workflow) SetFilename(value string) {
+	if w == nil {
+		return
+	}
+
+	w.filename = value
+}
+
+func (w *Workflow) GetFilename() string {
+	if w == nil {
+		return ""
+	}
+
+	if w.filename == "" {
+		w.filename = FilenameFor(*w)
+	}
+
+	return w.filename
+}
+
+func (w *Workflow) GetRelativePathAndFilename() string {
+	return path.Join(DefaultPathToWorkflows, w.GetFilename())
+}
+
+func FilenameFor(w Workflow) string {
+	newName := strings.Map(func(r rune) rune {
+		switch {
+		case '0' <= r && r <= '9':
+			fallthrough
+		case 'A' <= r && r <= 'Z':
+			fallthrough
+		case 'a' <= r && r <= 'z':
+			return r
+		default:
+			return '-'
+		}
+	}, w.Name)
+
+	newName = strings.Trim(newName, "-")
+	newName = util.RemoveDupOf(newName, '-')
+	newName = strings.ToLower(newName + ".yml")
+
+	return newName
 }
 
 // WorkflowOn
@@ -437,41 +482,4 @@ func (x *StringOrInt) MarshalJSON() ([]byte, error) {
 	}
 
 	return []byte(util.JSONNull), nil
-}
-
-func (w *Workflow) GetFilename() string {
-	if w == nil {
-		return ""
-	}
-
-	if w.Filename == "" {
-		w.Filename = FilenameFor(*w)
-	}
-
-	return w.Filename
-}
-
-func (w *Workflow) GetRelativePathAndFilename() string {
-	return path.Join(DefaultPathToWorkflows, w.GetFilename())
-}
-
-func FilenameFor(w Workflow) string {
-	newName := strings.Map(func(r rune) rune {
-		switch {
-		case '0' <= r && r <= '9':
-			fallthrough
-		case 'A' <= r && r <= 'Z':
-			fallthrough
-		case 'a' <= r && r <= 'z':
-			return r
-		default:
-			return '-'
-		}
-	}, w.Name)
-
-	newName = strings.Trim(newName, "-")
-	newName = util.RemoveDupOf(newName, '-')
-	newName = strings.ToLower(newName + ".yml")
-
-	return newName
 }
