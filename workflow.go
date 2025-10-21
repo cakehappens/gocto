@@ -119,7 +119,7 @@ const (
 type OnWorkflowRun struct {
 	Workflows []string `json:"workflows,omitempty,omitzero"`
 	Types     []string `json:"types,omitempty,omitzero"`
-	OnBranches
+	*OnBranches
 }
 
 type OnDispatch struct {
@@ -162,14 +162,14 @@ type OnTags struct {
 type OnSchedule struct{}
 
 type OnPullRequest struct {
-	OnPaths
-	OnBranches
+	*OnPaths
+	*OnBranches
 }
 
 type OnPush struct {
-	OnPaths
-	OnBranches
-	OnTags
+	*OnPaths
+	*OnBranches
+	*OnTags
 }
 
 // Concurrency
