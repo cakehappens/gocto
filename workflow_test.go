@@ -12,8 +12,8 @@ import (
 func TestWorkflowSchemaValidation(t *testing.T) {
 	wf := Workflow{
 		On: WorkflowOn{
-			Push: OnPush{
-				OnBranches: OnBranches{
+			Push: &OnPush{
+				OnBranches: &OnBranches{
 					Branches: []string{"main"},
 				},
 			},
