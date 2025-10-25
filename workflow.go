@@ -196,25 +196,31 @@ type Job struct {
 	ContinueOnError bool              `json:"continue-on-error,omitempty,omitzero"`
 	Uses            string            `json:"uses,omitempty,omitzero"`
 	With            map[string]any    `json:"with,omitempty,omitzero"`
-	Secrets         Secrets           `json:"secrets,omitempty,omitzero"`
+	Secrets         *Secrets          `json:"secrets,omitempty,omitzero"`
 	Container       Container         `json:"container,omitempty,omitzero"`
 }
 
 type Secrets struct {
-	Inherit bool
-	Map     map[string]string
+	Inherit bool              `json:"inherit,omitempty,omitzero"`
+	Map     map[string]string `json:",inline,omitempty,omitzero"`
 }
 
 func (s *Secrets) MarshalJSON() ([]byte, error) {
 	if s == nil {
-		return []byte(util.JSONNull), nil
+		return nil, nil
 	}
 
 	if s.Inherit {
-		return json.Marshal(s.Inherit)
-	} else {
-		return json.Marshal(s.Map)
+		type inheritOnlyAlias struct {
+			Inherit bool `json:"inherit,omitempty,omitzero"`
+		}
+		alias := inheritOnlyAlias{
+			Inherit: s.Inherit,
+		}
+		return json.Marshal(&alias)
 	}
+
+	return json.Marshal(s.Map)
 }
 
 func (s *Secrets) UnmarshalJSON(data []byte) error {
@@ -222,10 +228,13 @@ func (s *Secrets) UnmarshalJSON(data []byte) error {
 		return nil
 	}
 
-	var boolVal bool
-	if err := json.Unmarshal(data, &boolVal); err == nil {
+	type inheritOnlyAlias struct {
+		Inherit bool `json:"inherit,omitempty,omitzero"`
+	}
+	var alias inheritOnlyAlias
+	if err := json.Unmarshal(data, &alias); err == nil {
 		*s = Secrets{
-			Inherit: boolVal,
+			Inherit: alias.Inherit,
 		}
 		return nil
 	}
