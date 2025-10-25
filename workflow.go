@@ -12,7 +12,7 @@ import (
 )
 
 const (
-	DefaultPathToWorkflows = ".github/workflows"
+	DefaultPathToWorkflows = "./.github/workflows"
 )
 
 // Workflow
