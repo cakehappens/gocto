@@ -201,7 +201,7 @@ type Job struct {
 }
 
 type Secrets struct {
-	Inherit bool              `json:"inherit,omitempty,omitzero"`
+	Inherit bool
 	Map     map[string]string `json:",inline,omitempty,omitzero"`
 }
 
@@ -211,13 +211,7 @@ func (s *Secrets) MarshalJSON() ([]byte, error) {
 	}
 
 	if s.Inherit {
-		type inheritOnlyAlias struct {
-			Inherit bool `json:"inherit,omitempty,omitzero"`
-		}
-		alias := inheritOnlyAlias{
-			Inherit: s.Inherit,
-		}
-		return json.Marshal(&alias)
+		return json.Marshal("inherit")
 	}
 
 	return json.Marshal(s.Map)
@@ -228,13 +222,10 @@ func (s *Secrets) UnmarshalJSON(data []byte) error {
 		return nil
 	}
 
-	type inheritOnlyAlias struct {
-		Inherit bool `json:"inherit,omitempty,omitzero"`
-	}
-	var alias inheritOnlyAlias
-	if err := json.Unmarshal(data, &alias); err == nil {
+	var inheritString string
+	if err := json.Unmarshal(data, &inheritString); err == nil {
 		*s = Secrets{
-			Inherit: alias.Inherit,
+			Inherit: true,
 		}
 		return nil
 	}
