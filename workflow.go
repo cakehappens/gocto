@@ -18,13 +18,14 @@ const (
 // Workflow
 // https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions#about-yaml-syntax-for-workflows
 type Workflow struct {
-	Name        string         `json:"name"`
-	RunName     string         `json:"run-name,omitempty,omitzero"`
-	On          WorkflowOn     `json:"on"`
-	Concurrency Concurrency    `json:"concurrency,omitempty,omitzero"`
-	Defaults    Defaults       `json:"defaults,omitempty,omitzero"`
-	Jobs        map[string]Job `json:"jobs"`
-
+	Name        string            `json:"name"`
+	RunName     string            `json:"run-name,omitempty,omitzero"`
+	On          WorkflowOn        `json:"on"`
+	Concurrency Concurrency       `json:"concurrency,omitempty,omitzero"`
+	Defaults    Defaults          `json:"defaults,omitempty,omitzero"`
+	Jobs        map[string]Job    `json:"jobs"`
+	Env         map[string]string `json:"env,omitempty,omitzero"`
+	Permissions Permissions       `json:"permissions,omitempty,omitzero"`
 	// Storing filename here is useful when you need to reference reusable workflows
 	filename string
 }
