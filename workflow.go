@@ -23,9 +23,9 @@ type Workflow struct {
 	On          WorkflowOn        `json:"on"`
 	Concurrency Concurrency       `json:"concurrency,omitempty,omitzero"`
 	Defaults    Defaults          `json:"defaults,omitempty,omitzero"`
-	Jobs        map[string]Job    `json:"jobs"`
 	Env         map[string]string `json:"env,omitempty,omitzero"`
 	Permissions Permissions       `json:"permissions,omitempty,omitzero"`
+	Jobs        map[string]Job    `json:"jobs"`
 	// Storing filename here is useful when you need to reference reusable workflows
 	filename string
 }
