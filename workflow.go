@@ -3,6 +3,7 @@ package gocto
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"maps"
 	"path"
 	"slices"
@@ -195,14 +196,14 @@ type Job struct {
 	TimeoutMinutes  int               `json:"timeout-minutes,omitempty,omitzero"`
 	ContinueOnError bool              `json:"continue-on-error,omitempty,omitzero"`
 	Uses            string            `json:"uses,omitempty,omitzero"`
-	With            map[string]any    `json:"with,omitempty,omitzero"`
+	With            map[string]string `json:"with,omitempty,omitzero"`
 	Secrets         *Secrets          `json:"secrets,omitempty,omitzero"`
 	Container       Container         `json:"container,omitempty,omitzero"`
 }
 
 type Secrets struct {
 	Inherit bool
-	Map     map[string]string `json:",inline,omitempty,omitzero"`
+	Map     map[string]string
 }
 
 func (s *Secrets) MarshalJSON() ([]byte, error) {
@@ -224,6 +225,9 @@ func (s *Secrets) UnmarshalJSON(data []byte) error {
 
 	var inheritString string
 	if err := json.Unmarshal(data, &inheritString); err == nil {
+		if inheritString != "inherit" {
+			return fmt.Errorf("unexpected value for secrets: %s", inheritString)
+		}
 		*s = Secrets{
 			Inherit: true,
 		}
@@ -237,7 +241,7 @@ func (s *Secrets) UnmarshalJSON(data []byte) error {
 		}
 	}
 
-	return errors.New("unable to unmarshal secrets field, expected bool or map[string]string")
+	return errors.New("unable to unmarshal secrets field, expected string \"inherit\" or map[string]string")
 }
 
 type Permissions struct {
