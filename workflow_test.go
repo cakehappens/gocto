@@ -83,6 +83,42 @@ func TestWorkflowSchemaValidation(t *testing.T) {
 				},
 			},
 		},
+		{
+			wf: Workflow{
+				Name: "string-or-slice-string-test",
+				On: WorkflowOn{
+					Push: &OnPush{},
+				},
+				Jobs: map[string]Job{
+					"foo": {
+						RunsOn: StringOrSlice{"ubuntu-latest"},
+					},
+				},
+			},
+			assertions: []func(t *testing.T, marshalled string){
+				func(t *testing.T, marshalled string) {
+					assert.Regexp(t, `"runs-on":"ubuntu-latest"`, marshalled)
+				},
+			},
+		},
+		{
+			wf: Workflow{
+				Name: "string-or-slice-slice-test",
+				On: WorkflowOn{
+					Push: &OnPush{},
+				},
+				Jobs: map[string]Job{
+					"foo": {
+						RunsOn: StringOrSlice{"a", "b"},
+					},
+				},
+			},
+			assertions: []func(t *testing.T, marshalled string){
+				func(t *testing.T, marshalled string) {
+					assert.Regexp(t, `"runs-on":\["a","b"\]`, marshalled)
+				},
+			},
+		},
 	}
 
 	for _, tc := range cases {

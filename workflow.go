@@ -184,9 +184,9 @@ type Concurrency struct {
 type Job struct {
 	Name            string            `json:"name,omitempty,omitzero"`
 	Permissions     Permissions       `json:"permissions,omitempty,omitzero"`
-	Needs           []string          `json:"needs,omitempty,omitzero"`
+	Needs           StringOrSlice     `json:"needs,omitempty,omitzero"`
 	If              string            `json:"if,omitempty,omitzero"`
-	RunsOn          []string          `json:"runs-on,omitempty,omitzero"`
+	RunsOn          StringOrSlice     `json:"runs-on,omitempty,omitzero"`
 	Environment     Environment       `json:"environment,omitempty,omitzero"`
 	Concurrency     Concurrency       `json:"concurrency,omitempty,omitzero"`
 	Outputs         map[string]string `json:"outputs,omitempty,omitzero"`
@@ -201,9 +201,48 @@ type Job struct {
 	Container       Container         `json:"container,omitempty,omitzero"`
 }
 
+type StringOrSlice []string
+
+func (j *StringOrSlice) UnmarshalJSON(data []byte) error {
+	if util.IsJSONNull(data) {
+		return nil
+	}
+
+	var stringVal string
+	if err := json.Unmarshal(data, &stringVal); err == nil {
+		*j = []string{stringVal}
+	}
+
+	type TmpJson StringOrSlice
+	var tmpJson TmpJson
+	err := json.Unmarshal(data, &tmpJson)
+	if err != nil {
+		return err
+	}
+
+	*j = StringOrSlice(tmpJson)
+	return nil
+}
+
+func (j StringOrSlice) MarshalJSON() ([]byte, error) {
+	if len(j) == 0 {
+		return nil, nil
+	}
+
+	if len(j) == 1 {
+		return json.Marshal(j[0])
+	}
+	
+	type TmpJson StringOrSlice
+	var tmpJson TmpJson
+
+	tmpJson = TmpJson(j)
+	return json.Marshal(tmpJson)
+}
+
 type Secrets struct {
-	Inherit bool
-	Map     map[string]string
+	Inherit bool              `json:"-"`
+	Map     map[string]string `json:"-"`
 }
 
 func (s *Secrets) MarshalJSON() ([]byte, error) {
