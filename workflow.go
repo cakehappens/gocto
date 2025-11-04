@@ -199,6 +199,7 @@ type Job struct {
 	With            map[string]string `json:"with,omitempty,omitzero"`
 	Secrets         *Secrets          `json:"secrets,omitempty,omitzero"`
 	Container       Container         `json:"container,omitempty,omitzero"`
+	Strategy        Strategy          `json:"strategy,omitempty,omitzero"`
 }
 
 type StringOrSlice []string
@@ -232,7 +233,7 @@ func (j StringOrSlice) MarshalJSON() ([]byte, error) {
 	if len(j) == 1 {
 		return json.Marshal(j[0])
 	}
-	
+
 	type TmpJson StringOrSlice
 	var tmpJson TmpJson
 
@@ -334,7 +335,6 @@ type Step struct {
 	Env              map[string]string `json:"env,omitempty,omitzero"`
 	ContinueOnError  bool              `json:"continue-on-error,omitempty,omitzero"`
 	TimeoutMinutes   int               `json:"timeout-minutes,omitempty,omitzero"`
-	Strategy         Strategy          `json:"strategy,omitempty,omitzero"`
 }
 
 func (s Step) WithName(name string) Step {
